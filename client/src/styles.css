@@ -1,0 +1,275 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f6f7fb;
+  color: #1b2330;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+a { color: #2563eb; }
+
+/* ── Shell ── */
+.app-shell { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+header h1 { margin: 0 0 6px; font-size: clamp(1.6rem, 2.5vw, 2.4rem); }
+header p  { margin: 0 0 20px; color: #606b78; font-size: 0.95rem; }
+
+/* ── Input card ── */
+.input-card {
+  background: #fff;
+  border: 1px solid #d7dee8;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 14px;
+}
+
+.input-card label { display: block; font-weight: 600; margin-bottom: 14px; }
+
+.input-row { display: flex; gap: 10px; margin-top: 8px; }
+.input-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #c6d0dd;
+  background: #f8fafc;
+}
+.input-row input:focus { outline: none; border-color: #2563eb; background: #fff; }
+.input-row button {
+  padding: 10px 20px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.input-row button:disabled { opacity: 0.45; cursor: default; }
+
+/* ── Autocomplete dropdown ── */
+.suggest-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #c6d0dd;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  z-index: 100;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.suggest-dropdown li {
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.suggest-dropdown li:hover {
+  background: #eff4ff;
+}
+
+.suggest-loading {
+  color: #94a3b8;
+  font-style: italic;
+  cursor: default !important;
+}
+
+.suggest-added {
+  color: #16a34a;
+  background: #f0fdf4;
+}
+
+.suggest-check {
+  display: inline-block;
+  width: 18px;
+  font-size: 0.85rem;
+  color: #16a34a;
+}
+
+.suggest-footer {
+  border-top: 1px solid #e9eef5;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  padding: 8px !important;
+}
+
+
+/* ── Action row ── */
+.action-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.fetch-button {
+  padding: 13px 26px;
+  border: none;
+  border-radius: 12px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: background 0.15s;
+}
+.fetch-button:hover:not(:disabled) { background: #1d4ed8; }
+.fetch-button:disabled { opacity: 0.45; cursor: default; }
+
+.message { color: #334155; font-size: 0.9rem; }
+
+/* ── Workspace ── */
+.workspace {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 280px minmax(0, 1fr);
+}
+
+/* ── Aircraft list panel ── */
+.aircraft-list {
+  background: #fff;
+  border: 1px solid #d7dee8;
+  border-radius: 16px;
+  padding: 18px;
+  align-self: start;
+  max-height: 78vh;
+  overflow-y: auto;
+}
+.aircraft-list h2 { margin: 0 0 14px; font-size: 0.95rem; font-weight: 700; }
+.aircraft-list ul { list-style: none; margin: 0; padding: 0; }
+
+.aircraft-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s;
+}
+.aircraft-list li:hover  { background: #f0f4ff; }
+.aircraft-list li.selected { background: #eff4ff; border-color: #93c5fd; }
+
+.aircraft-info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.aircraft-name {
+  font-size: 0.88rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.param-count { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+
+.list-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 8px; }
+
+.remove-btn {
+  background: #fee2e2;
+  border: none;
+  color: #ef4444;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 2px 7px;
+  border-radius: 6px;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.remove-btn:hover { background: #ef4444; color: #fff; }
+
+/* ── Status badges ── */
+.status {
+  font-size: 0.7rem; padding: 2px 8px; border-radius: 999px;
+  text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap;
+}
+.status.idle     { background: #eef2ff; color: #3730a3; }
+.status.fetching { background: #fef3c7; color: #92400e; }
+.status.done     { background: #dcfce7; color: #166534; }
+.status.error    { background: #ffe4e6; color: #b91c1c; }
+
+/* ── Details panel ── */
+.details-panel {
+  background: #fff;
+  border: 1px solid #d7dee8;
+  border-radius: 16px;
+  padding: 22px;
+  min-height: 300px;
+}
+
+.details-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.details-header h2 { margin: 0; font-size: 1.15rem; }
+.source-link { font-size: 0.82rem; color: #2563eb; white-space: nowrap; }
+
+/* ── Category sections ── */
+.categories-container { display: flex; flex-direction: column; gap: 24px; }
+
+.category-section {}
+.category-title {
+  margin: 0 0 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  border-bottom: 1px solid #e9eef5;
+  padding-bottom: 6px;
+}
+
+/* ── Param cards ── */
+.params-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.param-card {
+  background: #f8fafc;
+  border: 1px solid #e5eaf2;
+  padding: 12px 14px;
+  border-radius: 12px;
+}
+
+.param-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.param-card pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.88rem;
+  color: #1b2330;
+  font-family: inherit;
+}
+
+/* ── Misc ── */
+.empty-hint { color: #94a3b8; font-size: 0.9rem; }
+.error-card { padding: 16px; border-radius: 12px; background: #ffe4e6; color: #9f1239; font-size: 0.9rem; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .workspace { grid-template-columns: 1fr; }
+  .aircraft-list { max-height: 220px; }
+}
+@media (max-width: 600px) {
+  .params-grid { grid-template-columns: 1fr 1fr; }
+}
