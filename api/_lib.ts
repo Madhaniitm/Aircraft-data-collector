@@ -3,21 +3,9 @@ import * as cheerio from 'cheerio';
 
 export const UA_OBJ = { headers: { 'User-Agent': 'AircraftDataCollector/1.0 (research tool)' } };
 
-// ── Wikipedia request with retry on 429 ──────────────────────────────────────
-export const wikiGet = async (url: string): Promise<any> => {
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      return await axios.get(url, UA_OBJ);
-    } catch (e: any) {
-      if (e?.response?.status === 429) {
-        const retryAfter = parseInt(e.response.headers?.['retry-after'] || '5', 10);
-        const wait = Math.max(retryAfter * 1000, Math.pow(2, attempt) * 1000);
-        await new Promise(r => setTimeout(r, wait));
-      } else throw e;
-    }
-  }
-  throw new Error('Wikipedia API unavailable after retries');
-};
+// ── Wikipedia request — no retry in serverless (30s limit) ───────────────────
+export const wikiGet = async (url: string): Promise<any> =>
+  axios.get(url, { ...UA_OBJ, timeout: 8000 });
 
 // ── Value cleaning ────────────────────────────────────────────────────────────
 export const cleanWikiValue = (raw: string): string => {
@@ -325,15 +313,10 @@ export const findAircraftPage = async (name: string): Promise<string> => {
   const key = name.toLowerCase();
   if (pageTitleCache.has(key)) return pageTitleCache.get(key)!;
   const enc = encodeURIComponent;
-  const base = `https://en.wikipedia.org/w/api.php?action=query&list=search&srlimit=3&format=json&srnamespace=0&srprop=`;
-  const [r1, r2] = await Promise.allSettled([
-    wikiGet(`${base}&srsearch=${enc(name + ' hastemplate:"Infobox aircraft"')}`),
-    wikiGet(`${base}&srsearch=${enc(name + ' hastemplate:"Infobox weapon"')}`),
-  ]);
-  const candidates: string[] = [
-    ...(r1.status === 'fulfilled' ? (r1.value.data.query?.search || []).map((h: any) => h.title) : []),
-    ...(r2.status === 'fulfilled' ? (r2.value.data.query?.search || []).map((h: any) => h.title) : []),
-  ].filter((t, i, a) => t && a.indexOf(t) === i);
+  // Single search call — combines both template types in one query
+  const base = `https://en.wikipedia.org/w/api.php?action=query&list=search&srlimit=5&format=json&srnamespace=0&srprop=`;
+  const res = await wikiGet(`${base}&srsearch=${enc(name)}`);
+  const candidates: string[] = (res.data.query?.search || []).map((h: any) => h.title);
   const best = candidates.find(t => t.toLowerCase().includes(name.toLowerCase())) || candidates[0] || name;
   pageTitleCache.set(key, best);
   return best;

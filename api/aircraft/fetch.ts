@@ -1,7 +1,6 @@
 import {
-  findAircraftPage, fetchWikitext, fetchHtml,
+  findAircraftPage, fetchWikitext,
   mapAircraftSpecs, extractAllInfoboxes,
-  parseHtmlFallback, ALL_KNOWN_PARAMS,
 } from '../_lib';
 
 export default async function handler(req: any, res: any) {
@@ -18,18 +17,12 @@ export default async function handler(req: any, res: any) {
   const fetchOne = async (rawName: string) => {
     const name = String(rawName).trim();
     try {
+      // 2 API calls per aircraft: find page + fetch wikitext
       const pageTitle = await findAircraftPage(name);
       const wikitext = await fetchWikitext(pageTitle);
       let merged: Record<string, string> = {};
       if (wikitext) {
         merged = { ...extractAllInfoboxes(wikitext), ...mapAircraftSpecs(wikitext) };
-      }
-      if (Object.keys(merged).length < 5) {
-        const html = await fetchHtml(pageTitle);
-        if (html) {
-          const afterWiki = ALL_KNOWN_PARAMS.filter(f => !merged[f]);
-          merged = { ...parseHtmlFallback(html, afterWiki), ...merged };
-        }
       }
       const params = Object.fromEntries(Object.entries(merged).filter(([, v]) => v && v.trim()));
       return {
@@ -42,6 +35,10 @@ export default async function handler(req: any, res: any) {
     }
   };
 
-  const items = await Promise.all(names.map(fetchOne));
+  // Sequential to avoid overwhelming Wikipedia API (2 calls × N aircraft)
+  const items: any[] = [];
+  for (const name of names) {
+    items.push(await fetchOne(name));
+  }
   res.json(items);
 }
