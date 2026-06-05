@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-// In production: set VITE_API_URL to your deployed backend URL
-// In development: empty string → Vite proxy to localhost:4000
-const API = import.meta.env.VITE_API_URL || '';
+// In dev: Vite proxies /api → localhost:4000
+// In production (Vercel): /api routes are serverless functions on same domain
+const API = '';
 
 // Auto-generate a readable label from a camelCase key
 const keyToLabel = (key: string): string =>
