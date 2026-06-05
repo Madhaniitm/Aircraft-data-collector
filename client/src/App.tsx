@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
+// In production: set VITE_API_URL to your deployed backend URL
+// In development: empty string → Vite proxy to localhost:4000
+const API = import.meta.env.VITE_API_URL || '';
+
 // Auto-generate a readable label from a camelCase key
 const keyToLabel = (key: string): string =>
   key
@@ -105,7 +109,7 @@ function App() {
 
     debounceRef.current = setTimeout(async () => {
       try {
-        const { data } = await axios.get(`/api/aircraft/suggest?q=${encodeURIComponent(nameInput.trim())}`);
+        const { data } = await axios.get(`${API}/api/aircraft/suggest?q=${encodeURIComponent(nameInput.trim())}`);
         setSuggestions(data);
         setShowDrop(true);
       } catch {
@@ -154,7 +158,7 @@ function App() {
       return next;
     });
     try {
-      const { data } = await axios.post('/api/aircraft/fetch', { names: active });
+      const { data } = await axios.post(`${API}/api/aircraft/fetch`, { names: active });
       const updated: Record<string, AircraftRecord> = {};
       data.forEach((item: any) => {
         updated[item.name] = {
